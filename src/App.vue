@@ -2,6 +2,7 @@
   import { useStore } from "./store"
   import { getVideoData } from "./services/youtube"
   import { ref } from "vue"
+  import { formatDuration } from "./utils"
 
   const store = useStore()
   const newVideo = ref("")
@@ -27,7 +28,7 @@
         <div>
           {{ video.id }}
           <img :alt="video.title" :src="video.thumbnail" />
-          {{ video.duration }}
+          {{ formatDuration(video.duration) }}
         </div>
       </li>
     </ul>
