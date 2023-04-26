@@ -5,4 +5,9 @@ export default defineConfig({
   transformers: [
     transformerDirectives(),
   ],
+  theme: {
+    colors: {
+        'blue': '#136AE4'
+    }
+  }
 })
