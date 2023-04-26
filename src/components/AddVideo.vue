@@ -1,9 +1,8 @@
 <script setup lang="ts">
-  import { useStore } from "../store"
+  import { store } from "../store"
   import { getVideoData } from "../services/youtube"
   import { ref } from "vue"
 
-  const store = useStore()
   const newVideo = ref("")
 
   async function addVideo() {

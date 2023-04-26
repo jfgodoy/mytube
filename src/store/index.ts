@@ -1,8 +1,10 @@
 import { reactive } from "vue"
 import { type Video } from "../types"
 
-interface State {
-    videos: Video[]
+interface Store {
+    videos: Video[],
+    addVideo(video: Video): AddVideoResult,
+    removeVideo(videoId: Video['id']): void,
 }
 
 enum AddVideoResult {
@@ -11,40 +13,30 @@ enum AddVideoResult {
 }
 
 
-const state: State = reactive({
-    videos: []
+export const store: Store = reactive<Store>({
+    videos: [],
+    addVideo(video: Video): AddVideoResult {
+        const found = this.videos.find(v => v.id === video.id)
+        if (found) {
+            return AddVideoResult.AlreadyExists
+        }
+        this.videos.unshift(video)
+        saveVideos()
+        return AddVideoResult.Added
+    },
+    removeVideo(videoId: Video['id']) {
+        this.videos = this.videos.filter(v => v.id !== videoId)
+        saveVideos()
+    }
 })
 
 function loadVideos() {
     const jsonVideos = window.localStorage.getItem('videos')
-    state.videos = jsonVideos ? JSON.parse(jsonVideos) : []
+    store.videos = jsonVideos ? JSON.parse(jsonVideos) : []
 }
 
 function saveVideos() {
-    window.localStorage.setItem('videos', JSON.stringify(state.videos))
+    window.localStorage.setItem('videos', JSON.stringify(store.videos))
 }
 
-export function useStore() {
-    loadVideos()
-
-    function addVideo(video: Video): AddVideoResult {
-        const found = state.videos.find(v => v.id === video.id)
-        if (found) {
-            return AddVideoResult.AlreadyExists
-        }
-        state.videos.unshift(video)
-        saveVideos()
-        return AddVideoResult.Added
-    }
-
-    function removeVideo(videoId: Video['id']) {
-        state.videos = state.videos.filter(v => v.id !== videoId)
-        saveVideos()
-    }
-
-    return {
-        state,
-        addVideo,
-        removeVideo
-    }
-}
+loadVideos()
