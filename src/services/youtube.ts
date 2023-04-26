@@ -1,11 +1,8 @@
 import { type Video } from "../types"
+import { tryFn } from "../utils"
 
 export function getVideoData(url: string): Promise<Video> {
-    const parsedUrl = new URL(url);
-    const videoId = parsedUrl.searchParams.get('v');
-    if (!videoId) {
-        throw new Error("video id not found")
-    }
+    const videoId = extractId(url)
 
     const youtubeRequest = new URL(import.meta.env.VITE_YOUTUBE_API_URL + '/videos')
     youtubeRequest.searchParams.append('id', videoId)
@@ -31,3 +28,38 @@ export function getVideoData(url: string): Promise<Video> {
 			return video;
 		});
 }
+
+
+
+export function extractId(url: string): string {
+    const [err, parsedUrl] = tryFn(() => new URL(url))
+    if (err) {
+        throw new Error('url inválida')
+    }
+
+    let videoId;
+
+    switch (parsedUrl.hostname) {
+        case 'www.youtube.com':
+            videoId = parsedUrl.searchParams.get('v');
+            if (!videoId) {
+                const match = parsedUrl.pathname.match(/\/(?:(?:embed)|v)\/([^"&?\/\s]{11})/)
+                if (match) {
+                    videoId = match[1]
+                }
+            }
+            break;
+        case 'youtu.be':
+            videoId = parsedUrl.pathname.replace('/', '')
+            break;
+        default:
+            throw new Error('El dominio de la url provista no esta soportado.')
+    }
+
+    if (!videoId) {
+        throw new Error("No se pudo extraer el id del video desde la url proporcionada")
+    }
+
+    return videoId
+}
+
