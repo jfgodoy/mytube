@@ -3,26 +3,19 @@ import { type Video } from "../types"
 
 interface Store {
     videos: Video[],
-    addVideo(video: Video): AddVideoResult,
+    addVideo(video: Video): void,
     removeVideo(videoId: Video['id']): void,
 }
 
-enum AddVideoResult {
-    Added,
-    AlreadyExists
-}
-
-
 export const store: Store = reactive<Store>({
     videos: [],
-    addVideo(video: Video): AddVideoResult {
+    addVideo(video: Video) {
         const found = this.videos.find(v => v.id === video.id)
         if (found) {
-            return AddVideoResult.AlreadyExists
+            throw new Error("el video ya existe en tu álbum")
         }
         this.videos.unshift(video)
         saveVideos()
-        return AddVideoResult.Added
     },
     removeVideo(videoId: Video['id']) {
         this.videos = this.videos.filter(v => v.id !== videoId)
