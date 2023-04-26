@@ -3,9 +3,11 @@
   import { store } from "../store"
   import { formatDuration } from "../utils"
   import DetailsModal from './modals/Details.vue'
+  import DeleteModal from './modals/Delete.vue'
   import { type Video } from '../types'
 
   const detailsVideo: Ref<null | Video> = ref(null)
+  const deleteVideo: Ref<null | Video> = ref(null)
 
 </script>
 
@@ -17,9 +19,11 @@
             <span class="absolute right-2 bottom-2 bg-black color-white op-80 px-2 py-1 rounded font-sans font-bold tabular-nums pointer-events-none">
                 {{ formatDuration(video.duration) }}
             </span>
+            <button class="absolute right-2 top-2 bg-black color-white op-80 rounded font-sans font-bold text-lg flex justify-center line-height-1.4rem w-6 h-6" @click.stop="deleteVideo = video">✕</button>
         </li>
     </ul>
     <DetailsModal :video="detailsVideo" @close="detailsVideo = null" />
+    <DeleteModal :video="deleteVideo" @close="deleteVideo = null" />
 </template>
 
 <style scoped>
