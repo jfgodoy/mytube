@@ -1,2 +1,2 @@
 export { formatDuration } from './formatDuration'
-export { tryFn } from './tryFn'
+export { tryFn, tryAsyncFn } from './tryFn'

@@ -5,4 +5,5 @@ export type Video = {
     description: string,
     duration: string,
     thumbnail: string,
+    timestamp: number,
 }

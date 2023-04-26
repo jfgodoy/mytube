@@ -11,8 +11,8 @@
     (e: 'close'): void
   }>()
 
-  function handleRemove() {
-    store.removeVideo(props.video!.id);
+  async function handleRemove() {
+    await store.removeVideo(props.video!.id);
     emit('close')
   }
 

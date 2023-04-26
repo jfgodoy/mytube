@@ -1,5 +1,6 @@
 import { reactive } from "vue"
 import { type Video } from "../types"
+import firestore from '../services/firebase/videos'
 
 interface Store {
     videos: Video[],
@@ -9,27 +10,24 @@ interface Store {
 
 export const store: Store = reactive<Store>({
     videos: [],
-    addVideo(video: Video) {
-        const found = this.videos.find(v => v.id === video.id)
+    async addVideo(video: Video) {
+        const found = await firestore.hasVideo(video.id)
         if (found) {
             throw new Error("el video ya existe en tu álbum")
         }
-        this.videos.unshift(video)
-        saveVideos()
+        await firestore.addVideo(video)
+        await loadVideos()
     },
-    removeVideo(videoId: Video['id']) {
-        this.videos = this.videos.filter(v => v.id !== videoId)
-        saveVideos()
+    async removeVideo(videoId: Video['id']) {
+        await firestore.deleteVideo(videoId)
+        await loadVideos()
     }
 })
 
-function loadVideos() {
-    const jsonVideos = window.localStorage.getItem('videos')
-    store.videos = jsonVideos ? JSON.parse(jsonVideos) : []
+async function loadVideos() {
+    store.videos = await firestore.getVideos()
 }
 
-function saveVideos() {
-    window.localStorage.setItem('videos', JSON.stringify(store.videos))
-}
+
 
 loadVideos()

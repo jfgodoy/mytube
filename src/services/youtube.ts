@@ -24,6 +24,7 @@ export function getVideoData(url: string): Promise<Video> {
                 description: item.snippet.localized.description,
                 thumbnail: item.snippet.thumbnails.medium.url,
                 duration: item.contentDetails.duration,
+                timestamp: Date.now(),
             }
 			return video;
 		});

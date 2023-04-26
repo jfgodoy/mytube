@@ -10,7 +10,7 @@
     const url = newVideo.value;
     try {
         const video = await getVideoData(url)
-        store.addVideo(video)
+        await store.addVideo(video)
         newVideo.value = ""
     } catch (err: any) {
         errMessage.value = err.message
