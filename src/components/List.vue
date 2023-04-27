@@ -13,6 +13,13 @@
 
 
 <template>
+    <div v-if="store.status == 'loading'" class="flex justify-center c-gray">
+      Cargando videos...
+    </div>
+    <div v-if="store.status == 'error'" class="flex justify-center c-red">
+      Ocurrió un error en la comunicación con la base de datos.
+    </div>
+
     <ul class="grid grid-gap-14 grid-cols justify-center">
         <li v-for="video in store.videos" :key="video.id" class="relative inline-block"  @click="detailsVideo = video">
             <img :alt="video.title" :src="video.thumbnail" height="206" width="360" class="object-cover <sm:w-full b-4 b-transparent hover:b-blue"/>

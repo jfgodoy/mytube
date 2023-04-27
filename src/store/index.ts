@@ -4,12 +4,16 @@ import firestore from '../services/firebase/videos'
 
 interface Store {
     videos: Video[],
+    status: 'initial' | 'loading' | 'error' | 'loaded',
     addVideo(video: Video): void,
     removeVideo(videoId: Video['id']): void,
 }
 
 export const store: Store = reactive<Store>({
     videos: [],
+
+    status: 'initial',
+
     async addVideo(video: Video) {
         const found = await firestore.hasVideo(video.id)
         if (found) {
@@ -18,6 +22,7 @@ export const store: Store = reactive<Store>({
         await firestore.addVideo(video)
         await loadVideos()
     },
+
     async removeVideo(videoId: Video['id']) {
         await firestore.deleteVideo(videoId)
         await loadVideos()
@@ -28,6 +33,13 @@ async function loadVideos() {
     store.videos = await firestore.getVideos()
 }
 
-
-
-loadVideos()
+async function init() {
+  store.status = 'loading';
+  try {
+    await loadVideos()
+    store.status = 'loaded'
+  } catch(_err) {
+    store.status = 'error'
+  }
+}
+init()

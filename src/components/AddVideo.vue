@@ -1,23 +1,27 @@
 <script setup lang="ts">
   import { store } from "../store"
   import { getVideoData } from "../services/youtube"
-  import { ref, watch } from "vue"
+  import { ref, Ref, watch } from "vue"
+  import Feedback from './Feedback.vue'
 
   const newVideo = ref("")
-  const errMessage = ref("")
+  const feedback: Ref<typeof Feedback | null> = ref(null)
+
 
   async function addVideo() {
+    feedback.value?.showInfo('Agregando video...')
     const url = newVideo.value;
     try {
         const video = await getVideoData(url)
         await store.addVideo(video)
         newVideo.value = ""
+        feedback.value?.showSuccess('Video agregado correctamente')
     } catch (err: any) {
-        errMessage.value = err.message
+        feedback.value?.showError(err.message)
     }
   }
 
-  watch(newVideo, () => errMessage.value = "")
+  watch(newVideo, () => feedback.value?.clean('error'))
 
 
 </script>
@@ -29,6 +33,6 @@
             <input v-model="newVideo" class="b-1 b-black b-op-30 <sm:rounded-2 rounded-l-2 flex-grow-5 <sm:w-full max-w-5xl my-2 px-4 line-height-12 focus:shadow-blue"/>
             <button type="submit" class="bg-blue <sm:rounded-2 rounded-r-2 c-white flex-grow-1 <sm:w-full my-2 px-4 font-700 line-height-12" >Añadir</button>
         </div>
-        <div class="c-red">{{ errMessage }}</div>
+        <Feedback ref="feedback"/>
     </form>
 </template>
