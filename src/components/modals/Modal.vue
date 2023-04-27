@@ -1,19 +1,37 @@
 <script setup lang="ts">
+import { watch } from 'vue'
 
-defineProps<{
+const props = defineProps<{
   show: Boolean
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   (e: 'close'): void
 }>()
+
+
+const onEscape = (e: KeyboardEvent) => {
+  if (props.show && e.key === 'Escape') {
+    emit('close')
+  }
+}
+
+watch(() => props.show, show => {
+  if (show) {
+    document.addEventListener('keydown', onEscape)
+  } else {
+    document.removeEventListener('keydown', onEscape)
+  }
+})
+
+
 
 </script>
 
 <template>
   <Transition name="modal">
-    <div v-if="show" class="modal-mask" @click="$emit('close')">
-      <div class="modal-container relative w-full max-w-4xl">
+    <div v-if="show" class="modal-mask">
+      <div class="modal-container relative w-full max-w-4xl" >
         <slot />
         <button class="absolute top-1 right-3" @click="$emit('close')">✕</button>
       </div>
