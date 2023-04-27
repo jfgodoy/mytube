@@ -16,11 +16,15 @@
     <div v-if="store.status == 'loading'" class="flex justify-center c-gray">
       Cargando videos...
     </div>
-    <div v-if="store.status == 'error'" class="flex justify-center c-red">
+    <div v-else-if="store.status == 'error'" class="flex justify-center c-red">
       Ocurrió un error en la comunicación con la base de datos.
     </div>
+    <div v-else-if="store.status == 'loaded' && store.videos.length == 0" class="text-center">
+      <h2 class="text-xl c-black">El álbum está vacio. Agrega videos desde Youtube copiando y pegando la url en el campo de texto de más arriba.</h2>
+      <img class="m-auto" src="/cat.png" />
+    </div>
 
-    <ul class="grid grid-gap-14 grid-cols justify-center">
+    <ul v-else class="grid grid-gap-14 grid-cols justify-center">
         <li v-for="video in store.videos" :key="video.id" class="relative inline-block"  @click="detailsVideo = video">
             <img :alt="video.title" :src="video.thumbnail" height="206" width="360" class="object-cover <sm:w-full b-4 b-transparent hover:b-blue"/>
             <span class="absolute right-2 bottom-2 bg-black color-white op-80 px-2 py-1 rounded font-sans font-bold tabular-nums pointer-events-none">

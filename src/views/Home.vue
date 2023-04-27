@@ -7,7 +7,7 @@
 <template>
   <div class="max-w-screen-xl m-auto">
     <h1 class="text-center text-4xl font-700 mt-8">MyTube</h1>
-    <AddVideo class="mx-8 my-32" />
+    <AddVideo class="mx-8 mt-28 mb-14" />
     <List />
   </div>
 </template>
