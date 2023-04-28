@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { store } from "../store"
-  import { getVideoData } from "../services/youtube"
+  import { getVideoData as getVideoDataYoutube } from "../services/youtube"
+  import { getVideoData as getVideoDataVimeo } from "../services/vimeo"
   import { ref, Ref, watch } from "vue"
   import Feedback from './Feedback.vue'
 
@@ -12,7 +13,12 @@
     feedback.value?.showInfo('Agregando video...')
     const url = newVideo.value;
     try {
-        const video = await getVideoData(url)
+        let video;
+        if (url.match(/vimeo/)) {
+          video = await getVideoDataVimeo(url)
+        } else {
+          video = await getVideoDataYoutube(url)
+        }
         await store.addVideo(video)
         newVideo.value = ""
         feedback.value?.showSuccess('Video agregado correctamente')
